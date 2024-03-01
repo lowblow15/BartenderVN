@@ -426,7 +426,7 @@ public:
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
-		
+		Clear(olc::BLACK);
 		return true;
 	}
 };

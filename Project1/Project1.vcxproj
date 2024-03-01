@@ -129,6 +129,9 @@
   <ItemGroup>
     <ClInclude Include="..\..\olcPixelGameEngine-master\olcPixelGameEngine.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\BartenderVN.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

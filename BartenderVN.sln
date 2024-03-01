@@ -6,9 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Project1", "Project1\Project1.vcxproj", "{741BE0E3-C6EC-4C10-B1EC-B5DC1CF99259}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B6DD56E5-980E-4146-AEAF-9A7457680FB3}"
-	ProjectSection(SolutionItems) = preProject
-		BartenderVN.cpp = BartenderVN.cpp
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
