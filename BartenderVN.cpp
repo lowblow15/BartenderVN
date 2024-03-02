@@ -18,6 +18,15 @@ public:
 		marriedwoman = 5,
 		changling = 6,
 	};
+	enum stateEnum
+	{
+		cutsceneState = 0,
+		barState =1,
+		EODstate = 3,
+		newDayState = 4,
+		GameOverState = 5,
+		titleState = 6,
+	};
 	struct Rect
 	{
 		olc::vf2d pos;
@@ -266,11 +275,16 @@ public:
 		}
 
 	};
+	int Days = 7;
+	int GameState = 0;
 	std::vector<std::vector<cutScene>> Scenes;
 	cutScene* CurrentScenePtr;
+	npc* ActiveNPC;
 	std::vector<std::string> Drinks;
-	std::vector<std::string> Problems;
+	std::vector<std::vector<std::string>> Problems;
 	std::vector<std::string> sprStrings;
+	
+
 	std::vector<int> npcNums = { drifter,officelady,trucker,thug,marriedman,marriedwoman};
 public:
 	void DrawCutscene()
@@ -280,6 +294,45 @@ public:
 		DrawStringDecal(CurrentScenePtr->SceneWindow.StringPos, CurrentScenePtr->SceneWindow.displayString);
 		DrawDecal(CurrentScenePtr->SceneWindow.MainChar->PortraitPos, CurrentScenePtr->SceneWindow.MainChar->PortraitDecptr);
 		DrawDecal(CurrentScenePtr->SceneWindow.NpcInScene->PortraitPos, CurrentScenePtr->SceneWindow.NpcInScene->PortraitDecptr);
+	}
+	void DayManager()
+	{
+		if (Days == 0)
+		{
+			GameStateManager(GameOverState);
+			return;
+		}
+		Days--;
+		if (Days == 4)
+		{
+
+		}
+		GameStateManager(newDayState);
+		
+		NewDay();
+	}
+	void NewDay()
+	{
+		NewDaySceneSetter();
+		GameStateManager(barState);
+
+	}
+	void NewDaySceneSetter()
+	{
+		for (int i = 0; i < Scenes.size(); i++)
+		{
+			Scenes[i].erase(Scenes[i].begin());
+		}
+	}
+	void SetCurrentScene(int npcnum)
+	{
+		CurrentScenePtr = &Scenes[npcnum][0];
+	}
+	void PickRandomNPC()
+	{
+		int randint = rand() % NPCs.size() - 1;
+		ActiveNPC = &NPCs[randint];
+
 	}
 	void InitDrinks(std::string filepath)
 	{
@@ -311,7 +364,7 @@ public:
 
 		}
 	}
-	void InitProblems(std::string filepath)
+	void InitProblems(std::string filepath,int npcnum)
 	{
 		std::istringstream textFile(filepath);
 		std::string fileString;
@@ -336,7 +389,7 @@ public:
 
 				textString = fileString;
 			}
-			Problems.emplace_back(textString);
+			Problems[npcnum].emplace_back(textString);
 
 		}
 	}
@@ -352,7 +405,7 @@ public:
 			}
 		}
 		int npC = 0;
-		int scenenum = 0;
+	    scenenum = 0;
 		for (auto i = Scenes.begin(); i < Scenes.end(); i++)
 		{
 			for (auto x = i->begin(); x < i->end(); x++)
@@ -363,7 +416,8 @@ public:
 				x->setStringVecs(x->SceneWindow.NpcInScene->IDnum, scenenum,"");
 				x->setStringVecs(x->SceneWindow.NpcInScene->IDnum, scenenum, "",true);
 				x->NextStringSetter();
-				x->SceneWindow.setBox({ 5,ScreenHeight() - 150 }, { ScreenWidth() - 15,125 }, olc::BLUE, olc::WHITE);
+
+				x->SceneWindow.setBox(olc::vf2d( 5,ScreenHeight() - 150 ), olc::vf2d(  ScreenWidth() - 15, 125 ), olc::BLUE, olc::WHITE);
 				
 			}
 			npC++;
@@ -377,7 +431,7 @@ public:
 		int randInt = rand() % Drinks.size() - 1;
 		newNpc.favoriteDrink = Drinks[randInt];
 		randInt = rand() % Problems.size() - 1;
-		newNpc.Problem = Problems[randInt];
+		newNpc.Problem = Problems[NpcNum][randInt];
 		newNpc.PortraitsprPtr = new olc::Sprite(sprString);
 		newNpc.PortraitDecptr = new olc::Decal(newNpc.PortraitsprPtr);
 		NPCs.emplace_back(newNpc);
@@ -413,9 +467,81 @@ public:
 	}
 	void InitThings()
 	{
+		Problems.resize(npcNums.size());
+		for (int i = 0; i < npcNums.size(); i++)
+		{
+			InitProblems("", npcNums[i]);
+		}
+		InitDrinks("");
+
 		for (int i = 0; i < npcNums.size(); i++)
 		{
 			InitNpcs(npcNums[i], "");
+		}
+		for (int i = 0; i < npcNums.size(); i++)
+		{
+			InitCutscenes(npcNums[i], 7);
+		}
+	}
+
+	void GameStateManager(int newState)
+	{
+		GameState = newState;
+	}
+	void PlayerControls()
+	{
+		switch (GameState)
+		{
+		case cutsceneState:
+			if (GetKey(olc::Key::RIGHT).bReleased||GetKey(olc::Key::D).bReleased)
+			{
+
+			}
+			if (GetKey(olc::Key::DOWN).bReleased || GetKey(olc::Key::S).bReleased)
+			{
+
+			}
+			if (GetKey(olc::Key::LEFT).bReleased || GetKey(olc::Key::A).bReleased)
+			{
+
+			}
+			if (GetKey(olc::Key::UP).bReleased || GetKey(olc::Key::W).bReleased)
+			{
+
+			}
+			if (GetKey(olc::Key::ENTER).bReleased)
+			{
+
+			}
+			break;
+		case barState:
+			break;
+		case EODstate:
+			if (GetKey(olc::Key::ENTER).bReleased)
+			{
+				GameStateManager(newDayState);
+			}
+			break;
+		case newDayState:
+			if (GetKey(olc::Key::ENTER).bReleased)
+			{
+				GameStateManager(barState);
+			}
+			break;
+		case GameOverState:
+			if (GetKey(olc::Key::ENTER).bReleased)
+			{
+				GameStateManager(titleState);
+			}
+			break;
+		case titleState:
+			if (GetKey(olc::Key::ENTER).bReleased)
+			{
+				GameStateManager(barState);
+			}
+			break;
+		default:
+			break;
 		}
 	}
 	bool OnUserCreate() override
@@ -423,14 +549,84 @@ public:
 		// Called once at the start, so create things here
 		return true;
 	}
+	void DrawBar()
+	{
 
+	}
+	void DrawEOD()
+	{
+
+	}
+	void DrawNewDay()
+	{
+
+	}
+	void DrawGameOver()
+	{
+
+	}
+	void DrawTitleScreen()
+	{
+
+	}
+	void DrawScreen(float fElapsedTime)
+	{
+		switch (GameState)
+		{
+		case cutsceneState:
+			DrawCutscene();
+			break;
+		case barState:
+			DrawBar();
+			break;
+		case EODstate:
+			DrawEOD();
+			break;
+		case newDayState:
+			DrawNewDay();
+
+			break;
+		case GameOverState:
+			DrawGameOver();
+			break;
+		case titleState:
+			DrawTitleScreen();
+			break;
+		default:
+			break;
+		}
+	}
 	bool OnUserUpdate(float fElapsedTime) override
 	{
 		Clear(olc::BLACK);
+		PlayerControls();
+		DrawScreen(fElapsedTime);
+		if (GameState != EODstate)
+		{
+
+			
+		}
+		else
+		{
+			DayManager();
+		}
 		return true;
 	}
 };
-
+//switch (GameState)
+//{
+//case cutsceneState:
+//	DrawCutscene();
+//	break;
+//case barState:
+//	break;
+//case EODstate:
+//	break;
+//case newDayState:
+//	break;
+//default:
+//	break;
+//}
 
 int main()
 {
