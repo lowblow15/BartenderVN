@@ -1,6 +1,7 @@
 #define OLC_PGE_APPLICATION
 #include "olcPixelGameEngine.h"
-
+# include <sstream>
+#include <iostream>
 class Example : public olc::PixelGameEngine
 {
 public:
@@ -247,29 +248,33 @@ public:
 
 	std::vector<int> npcNums = { drifter,officelady,trucker,marriedwoman};
 public:
-	void parseFile(const int npcnum, const int scenenum, const std::string& filename, std::vector<std::string>& TheseStrings)
+	void parseFile( int npcnum, int scenenum, const std::string& filename, std::vector<std::string>& TheseStrings)
 	{
 		TheseStrings.clear();
 
 		std::ifstream file(filename);
-		if (!file.is_open()) {
+		/*if (!file.is_open()) {
 			std::cerr << "Error opening file: " << filename << std::endl;
 			return;
-		}
+		}*/
+		if (file.is_open())
+		{
 
-		std::string line;
-		while (std::getline(file, line)) {
-			std::istringstream iss(line);
-			int npcNum, sceneNum;
-			std::string text;
 
-			// Parse NPC number, scene number, and text
-			if (iss >> npcNum >> sceneNum) {
-				// Read the rest of the line as text
-				text = line.substr(line.find(" ") + 1);
+			std::string line;
+			while (std::getline(file, line)) {
+				std::istringstream iss(line);
 
-				TheseStrings.emplace_back(text);
+				std::string text;
 
+				// Parse NPC number, scene number, and text
+				if (iss >> npcnum >> scenenum) {
+					// Read the rest of the line as text
+					text = line.substr(line.find(" ") + 1);
+
+					TheseStrings.emplace_back(text);
+
+				}
 			}
 		}
 		file.close();
@@ -343,10 +348,13 @@ public:
 				
 				x->SceneWindow.NpcInScene = &NPCs[npC];
 				x->SceneWindow.MainChar = &MainCharacter;
+				/*parseFile(npC, scenenum, "./BartenderVN/assets/Story.txt", x->npcStrings);
+				parseFile(npC, scenenum, "./BartenderVN/assets/BartenderReply.txt", x->MainCharStrings);
+				parseFile(npC, scenenum, "./BartenderVN/assets/Choices.txt", x->SceneWindow.selectionStrings);*/
 				parseFile(npC, scenenum, "./assets/Story.txt", x->npcStrings);
 				parseFile(npC, scenenum, "./assets/BartenderReply.txt", x->MainCharStrings);
 				parseFile(npC, scenenum, "./assets/Choices.txt", x->SceneWindow.selectionStrings);
-			
+
 				x->NextStringSetter();
 
 				x->SceneWindow.setBox(olc::vf2d( 5,ScreenHeight() - 150 ), olc::vf2d(  ScreenWidth() - 15, 125 ), olc::BLUE, olc::WHITE);
