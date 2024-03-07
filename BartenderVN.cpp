@@ -13,10 +13,8 @@ public:
 		drifter = 0,
 		officelady = 1,
 		trucker = 2,
-		thug = 3,
-		marriedman = 4,
-		marriedwoman = 5,
-		changling = 6,
+		marriedwoman = 3,
+		changling = 4,
 	};
 	enum stateEnum
 	{
@@ -176,6 +174,7 @@ public:
 		std::vector<std::string> MainCharStrings;
 		int talkState= 0;
 		bool Over = false;
+		int numOfLines = 0;
 		void toggleTalkState()
 		{
 			if (talkState == 0)
@@ -189,12 +188,21 @@ public:
 		}
 		void NextStringSetter()
 		{
+			toggleTalkState();
 			switch (talkState)
 			{
 			case 0:
-				setNextCharacterString(MainCharStrings[0]);
-				MainCharStrings.erase(MainCharStrings.begin());
+				if (numOfLines >= 0)
+				{
 
+					numOfLines--;
+					setNextCharacterString(MainCharStrings[0]);
+					MainCharStrings.erase(MainCharStrings.begin());
+				}
+				else
+				{
+					ConversationUpdater();
+				}
 				break;
 			case 1:
 				setNextNpcString(npcStrings[0]);
@@ -212,88 +220,67 @@ public:
 		{
 			SceneWindow.setString(thisString);
 		}
-		void setStringVecs(int npcNum, int sceneNum, std::string filepath,bool mainChar = false)
+		void SetNumOfLines()
 		{
-			if (mainChar == false)
-			{
-				std::istringstream textFile(filepath);
-				std::string fileString;
-				std::string searchString = "";
-				std::string textString;
-				//name = speakerName;
-				//textFile.open(filepath);
-				//std::ifstream file(filepath);
-				//if (textFile.is_open())
-				//{
+			numOfLines = MainCharStrings.size() + 1;
 
-
-				while (std::getline(textFile, fileString))
-				{
-					if (fileString.find(searchString) != std::string::npos)
-					{
-						size_t pos = fileString.find(searchString);
-						if (pos != std::string::npos)
-						{
-							fileString.erase(pos, searchString.length());
-						}
-
-						textString = fileString;
-					}
-					MainCharStrings.emplace_back(textString);
-
-				}
-			}
-			else
-			{
-				std::istringstream textFile(filepath);
-				std::string fileString;
-				std::string searchString = "";
-				std::string textString;
-				//name = speakerName;
-				//textFile.open(filepath);
-				//std::ifstream file(filepath);
-				//if (textFile.is_open())
-				//{
-
-
-				while (std::getline(textFile, fileString))
-				{
-					if (fileString.find(searchString) != std::string::npos)
-					{
-						size_t pos = fileString.find(searchString);
-						if (pos != std::string::npos)
-						{
-							fileString.erase(pos, searchString.length());
-						}
-
-						textString = fileString;
-					}
-					npcStrings.emplace_back(textString);
-					//heyt
-				}
-			}
+		}
+		void ConversationUpdater()
+		{
+			SceneWindow.selectionMode = true;
 		}
 
 	};
-	int Days = 7;
+	int Days = 4;
 	int GameState = 0;
+	int score;
+	int nextNpcNum = 0;
+	int nextSceneNum = 0;
+	bool gameOver = false;
 	std::vector<std::vector<cutScene>> Scenes;
 	cutScene* CurrentScenePtr;
 	npc* ActiveNPC;
-	std::vector<std::string> Drinks;
+	std::vector<std::string> Drinks = {"Manhattan","Martini","Red Wine","Scotch and Soda","Daiquiri","Old Fashioned"};
 	std::vector<std::vector<std::string>> Problems;
 	std::vector<std::string> sprStrings;
-	
 
-	std::vector<int> npcNums = { drifter,officelady,trucker,thug,marriedman,marriedwoman};
+
+	std::vector<int> npcNums = { drifter,officelady,trucker,marriedwoman};
 public:
+	void parseFile(const int npcnum, const int scenenum, const std::string& filename, std::vector<std::string>& TheseStrings)
+	{
+		TheseStrings.clear();
+
+		std::ifstream file(filename);
+		if (!file.is_open()) {
+			std::cerr << "Error opening file: " << filename << std::endl;
+			return;
+		}
+
+		std::string line;
+		while (std::getline(file, line)) {
+			std::istringstream iss(line);
+			int npcNum, sceneNum;
+			std::string text;
+
+			// Parse NPC number, scene number, and text
+			if (iss >> npcNum >> sceneNum) {
+				// Read the rest of the line as text
+				text = line.substr(line.find(" ") + 1);
+
+				TheseStrings.emplace_back(text);
+
+			}
+		}
+		file.close();
+	}
 	void DrawCutscene()
 	{
 		DrawRectDecal(CurrentScenePtr->SceneWindow.boxOuter.pos, CurrentScenePtr->SceneWindow.boxOuter.size);
 		FillRectDecal(CurrentScenePtr->SceneWindow.boxInner.pos, CurrentScenePtr->SceneWindow.boxInner.size,olc::BLUE);
 		DrawStringDecal(CurrentScenePtr->SceneWindow.StringPos, CurrentScenePtr->SceneWindow.displayString);
-		DrawDecal(CurrentScenePtr->SceneWindow.MainChar->PortraitPos, CurrentScenePtr->SceneWindow.MainChar->PortraitDecptr);
-		DrawDecal(CurrentScenePtr->SceneWindow.NpcInScene->PortraitPos, CurrentScenePtr->SceneWindow.NpcInScene->PortraitDecptr);
+		/*DrawDecal(CurrentScenePtr->SceneWindow.MainChar->PortraitPos, CurrentScenePtr->SceneWindow.MainChar->PortraitDecptr);
+		DrawDecal(CurrentScenePtr->SceneWindow.NpcInScene->PortraitPos, CurrentScenePtr->SceneWindow.NpcInScene->PortraitDecptr);*/
 	}
 	void DayManager()
 	{
@@ -303,7 +290,7 @@ public:
 			return;
 		}
 		Days--;
-		if (Days == 4)
+		if (Days == 2)
 		{
 
 		}
@@ -314,7 +301,7 @@ public:
 	void NewDay()
 	{
 		NewDaySceneSetter();
-		GameStateManager(barState);
+		GameStateManager(cutsceneState);
 
 	}
 	void NewDaySceneSetter()
@@ -324,9 +311,9 @@ public:
 			Scenes[i].erase(Scenes[i].begin());
 		}
 	}
-	void SetCurrentScene(int npcnum)
+	void SetCurrentScene(int npcnum , int scenenum)
 	{
-		CurrentScenePtr = &Scenes[npcnum][0];
+		CurrentScenePtr = &Scenes[npcnum][scenenum];
 	}
 	void PickRandomNPC()
 	{
@@ -334,65 +321,8 @@ public:
 		ActiveNPC = &NPCs[randint];
 
 	}
-	void InitDrinks(std::string filepath)
-	{
-		std::istringstream textFile(filepath);
-		std::string fileString;
-		std::string searchString = "";
-		std::string textString;
-	//	name = speakerName;
-		//textFile.open(filepath);
-		//std::ifstream file(filepath);
-		//if (textFile.is_open())
-		//{
 
-
-		while (std::getline(textFile, fileString))
-		{
-			if (fileString.find(searchString) != std::string::npos)
-			{
-				size_t pos = fileString.find(searchString);
-				if (pos != std::string::npos)
-				{
-					fileString.erase(pos, searchString.length());
-				}
-
-				textString = fileString;
-			}
-			Drinks.emplace_back(textString);
-
-
-		}
-	}
-	void InitProblems(std::string filepath,int npcnum)
-	{
-		std::istringstream textFile(filepath);
-		std::string fileString;
-		std::string searchString = "";
-		std::string textString;
-		//name = speakerName;
-		//textFile.open(filepath);
-		//std::ifstream file(filepath);
-		//if (textFile.is_open())
-		//{
-
-
-		while (std::getline(textFile, fileString))
-		{
-			if (fileString.find(searchString) != std::string::npos)
-			{
-				size_t pos = fileString.find(searchString);
-				if (pos != std::string::npos)
-				{
-					fileString.erase(pos, searchString.length());
-				}
-
-				textString = fileString;
-			}
-			Problems[npcnum].emplace_back(textString);
-
-		}
-	}
+	
 	void InitCutscenes(int npcnum,int scenenum)
 	{
 		Scenes.resize(npcnum);
@@ -413,8 +343,10 @@ public:
 				
 				x->SceneWindow.NpcInScene = &NPCs[npC];
 				x->SceneWindow.MainChar = &MainCharacter;
-				x->setStringVecs(x->SceneWindow.NpcInScene->IDnum, scenenum,"");
-				x->setStringVecs(x->SceneWindow.NpcInScene->IDnum, scenenum, "",true);
+				parseFile(npC, scenenum, "./assets/Story.txt", x->npcStrings);
+				parseFile(npC, scenenum, "./assets/BartenderReply.txt", x->MainCharStrings);
+				parseFile(npC, scenenum, "./assets/Choices.txt", x->SceneWindow.selectionStrings);
+			
 				x->NextStringSetter();
 
 				x->SceneWindow.setBox(olc::vf2d( 5,ScreenHeight() - 150 ), olc::vf2d(  ScreenWidth() - 15, 125 ), olc::BLUE, olc::WHITE);
@@ -424,55 +356,24 @@ public:
 			scenenum++;
 		}
 	}
+	void SetNewStringsToDisplay()
+	{
+		CurrentScenePtr->NextStringSetter();
+	}
 	void InitNpcs(int NpcNum,std::string sprString)
 	{
 		npc newNpc;
 		newNpc.IDnum = NpcNum;
-		int randInt = rand() % Drinks.size() - 1;
-		newNpc.favoriteDrink = Drinks[randInt];
-		randInt = rand() % Problems.size() - 1;
-		newNpc.Problem = Problems[NpcNum][randInt];
+	
 		newNpc.PortraitsprPtr = new olc::Sprite(sprString);
 		newNpc.PortraitDecptr = new olc::Decal(newNpc.PortraitsprPtr);
 		NPCs.emplace_back(newNpc);
 	}
-	void InitSprStrings(std::string filepath)
-	{
-		std::istringstream textFile(filepath);
-		std::string fileString;
-		std::string searchString = "";
-		std::string textString;
-		//name = speakerName;
-		//textFile.open(filepath);
-		//std::ifstream file(filepath);
-		//if (textFile.is_open())
-		//{
-
-
-		while (std::getline(textFile, fileString))
-		{
-			if (fileString.find(searchString) != std::string::npos)
-			{
-				size_t pos = fileString.find(searchString);
-				if (pos != std::string::npos)
-				{
-					fileString.erase(pos, searchString.length());
-				}
-
-				textString = fileString;
-			}
-			sprStrings.emplace_back(textString);
-
-		}
-	}
+	
 	void InitThings()
 	{
-		Problems.resize(npcNums.size());
-		for (int i = 0; i < npcNums.size(); i++)
-		{
-			InitProblems("", npcNums[i]);
-		}
-		InitDrinks("");
+	
+	
 
 		for (int i = 0; i < npcNums.size(); i++)
 		{
@@ -482,8 +383,32 @@ public:
 		{
 			InitCutscenes(npcNums[i], 7);
 		}
+		SetCurrentScene(nextNpcNum, nextSceneNum);
 	}
-
+	void UpdatenextnpcNum()
+	{
+		if (nextNpcNum<NPCs.size())
+		{
+			nextNpcNum++;
+		}
+		else
+		{
+			nextNpcNum = 0;
+			UpdateNextSceneNum();
+		}
+	}
+	void UpdateNextSceneNum()
+	{
+		if (nextSceneNum < Scenes[0].size())
+		{
+			nextSceneNum++;
+			GameStateManager(EODstate);
+		}
+		else
+		{
+			gameOver = true;
+		}
+	}
 	void GameStateManager(int newState)
 	{
 		GameState = newState;
@@ -525,7 +450,7 @@ public:
 		case newDayState:
 			if (GetKey(olc::Key::ENTER).bReleased)
 			{
-				GameStateManager(barState);
+				GameStateManager(cutsceneState);
 			}
 			break;
 		case GameOverState:
@@ -537,7 +462,7 @@ public:
 		case titleState:
 			if (GetKey(olc::Key::ENTER).bReleased)
 			{
-				GameStateManager(barState);
+				GameStateManager(cutsceneState);
 			}
 			break;
 		default:
@@ -546,6 +471,7 @@ public:
 	}
 	bool OnUserCreate() override
 	{
+		InitThings();
 		// Called once at the start, so create things here
 		return true;
 	}

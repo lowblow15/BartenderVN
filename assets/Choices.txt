@@ -1,0 +1,41 @@
+0 0 Just spend the time with her.
+0 0 Take the time to unwind
+0 1 Have you considered checking into charitable help?
+0 1 Could sell blood.
+0 2 Keeping them all crossed for her sir.
+0 2 Im not superstitious sir
+0 3 Fantastic! That drink is on the house sir!
+0 3 Still have the medical bills
+
+
+1 0 Maybe you should.
+1 0 Have you tried talking to HR?
+1 1 Should slap them next time.
+1 1 I wish I got called toots sometimes.
+1 2 Maybe they will realize they were wrong.
+1 2 Did he cry?
+1 3 Well thats good news!
+1 3 Did he really deserve it?
+
+2 0 Paying for the repair would mean more security
+2 0 Who says you need a ring?
+2 1 Im sorry to hear its that bad sir.
+2 1 Heck yeah man, ring money and party money.
+2 2 Im sure if you layed out your situation he would.
+2 2 If its his, its his.
+2 3 Very good sir!
+2 3 Still gotta fix that truck...
+
+3 0 Maybe take a few days to think it over.
+3 0 Be sure do it somewhere public.
+3 1 You are at a bar and you aren't seeing someone.
+3 1 You need to drop his ass
+3 2 That seems like he is projecting.
+3 2 Well.. are you?
+3 3 Thats...quite a strange situation.
+3 3 Kinda creepy behaviour.
+
+4 2 Are you...you?
+4 2 Hmm must be my mistake stranger.
+4 3 A shapeshifter.
+4 3 A person.
