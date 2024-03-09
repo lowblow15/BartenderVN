@@ -1,13 +1,13 @@
-0 0 Hey man \n Ill take my usual.
+0 0 Hey man. Ill take my usual.
 0 0 This will help dull the nerves
-0 0 My daughter is back in the hospital.\n I just dont know anymore
-0 0 No... no she isn't.\n Tell me..What would you say to a little girl \n who wont be alive next year?
+0 0 My daughter is back in the hospital.I just dont know anymore
+0 0 No... no she isn't.
 0 0 God I needed this drink
 0 1 The usual.
-0 1 The bills are piling up. \n I dont know how I'm going to afford it.
+0 1 The bills are piling up.I dont know how I'm going to afford it.
 0 1 Yeah maybe
 0 2 I need a drink 
-0 2 Shes having a test done today.\n Keep your fingers crossed us.
+0 2 Shes having a test done today. Keep your fingers crossed us.
 0 2 Please let this turn out alright.
 0 3 Scotch please!
 0 3 The test came back clean!
@@ -15,29 +15,32 @@
 
 1 0 Ill take the usual sir.
 1 0 Heres to all the dicks who are in charge of everything!
-1 0 You have no idea. Have you ever had one person compliment \n your looks and the next tell\n you that you need makeup?
-1 0 Its even worse when you don't want to hear either.\n I swear I want to quit.
+1 0 You have no idea.Have you ever had a bunch of creeps compliment you?
+1 0 Its even worse when you don't want to hear either.
+1 0 I swear I want to quit.
 1 0 Yeah...maybe
 1 1 Hit me with the usual
 1 1 I think if I get called toots one more time I'll snap.
 1 1 Heh thats funny 
 1 2 A Martini please. 
-1 2 I screamed at my boss.\n Im not sure if i will have a job tomorrow.
+1 2 I screamed at my boss.
+1 2 Im not sure if i will have a job tomorrow.
 1 2 I hate people.
 1 3 My usual please
-1 3 Well, my bosses boss found out about everything and fired him.\n I still have my job.
+1 3 Well, my bosses boss found out about everything and fired him.
+1 3 I still have my job.
 1 3 Somehow i think it is all going to stay the same.
 
 2 0 Hit me with the usual.
 2 0 Damned transmission is busted on my rig.
-2 0 The repairs wil be so expensive...\n I was so close to having enough..
+2 0 The repairs wil be so expensive. I was so close to having enough..
 2 0 An engagement ring. I just don't know. 
 2 0 You are probably right
 2 1 Get me a Brass Monkey
 2 1 I honestly might just sell the damn truck
 2 1 Meh im just griping.
 2 2 Ill take my usual
-2 2 If my cousin would give me our grandmothers ring\n this wouldnt be an issue.
+2 2 If my cousin would give me our grandmothers ring this wouldnt be an issue.
 2 2 Im calling him tomorrow.
 2 3 My usual please.
 2 3 My cousin said he would give me the ring, I'm proposing tomorrow!
@@ -46,16 +49,16 @@
 3 0 You know what I need
 3 0 He's cheating ...I just know it
 3 0 He keeps coming home late and he keeps getting texts at night.
-3 0 No ...no one else is working late at his office. I checked. \n I have to confront him.
+3 0 No ...no one else is working late at his office. I checked. I have to confront him.
 3 0 Im going to figure this out.
 3 1 I need to get drunk. Give me my usual.
-3 1 I followed him after work. He went to a bar. \He has to be seeing someone there
-3 1 I need to contact a lawyer.
+3 1 I followed him after work. He went to a bar.
+3 1 He has to be seeing someone there. I need to contact a lawyer.
 3 2 I need my usual badly.
 3 2 He actually accused ME of cheating!
 3 2 I hate men.
 3 3 Bloody mary please, its my last!
-3 3 Turns out he wasn't cheating on me. He thought I was!\n He kept going to bars looking for me!
+3 3 Turns out he wasn't cheating on me. He thought I was!He kept going to bars looking for me!
 3 3 We both decided to not go to anymore bars after today!
 
 4 2 Give me a beer.
