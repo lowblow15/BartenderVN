@@ -194,10 +194,11 @@ public:
 			}
 			Selections[0].checked = true;
 		}
-		void setPortraitPos()
+		void setPortraitPos(float x , float y)
 		{
 			NpcInScene->PortraitPos = { boxInner.pos.x, boxInner.pos.y - 200 };
-			MainChar->PortraitPos = { boxInner.pos.x + boxInner.size.x - 100,boxInner.pos.y - 200 };
+			//MainChar->PortraitPos = { boxInner.pos.x + boxInner.size.x - 100,boxInner.pos.y - 200 };
+			MainChar->PortraitPos = { x - 100,y - 300};
 		}
 	};
 	struct cutScene
@@ -512,7 +513,7 @@ public:
 
 				x->SceneWindow.setBox(olc::vf2d( 5,ScreenHeight() - 150 ), olc::vf2d(  ScreenWidth() - 15, 75 ), olc::BLUE, olc::WHITE);
 				x->SceneWindow.setStringPos();
-				x->SceneWindow.setPortraitPos();
+				x->SceneWindow.setPortraitPos(ScreenWidth(),ScreenHeight());
 				x->SceneWindow.setSelections(2);
 				npC++;
 			}
