@@ -1,5 +1,9 @@
 #define OLC_PGE_APPLICATION
 #include "olcPixelGameEngine.h"
+
+//#define OLC_SOUNDWAVE
+//#include "olcSoundWaveEngine.h"
+
 # include <sstream>
 #include <iostream>
 class Example : public olc::PixelGameEngine
@@ -190,6 +194,11 @@ public:
 			}
 			Selections[0].checked = true;
 		}
+		void setPortraitPos()
+		{
+			NpcInScene->PortraitPos = { boxInner.pos.x, boxInner.pos.y - 200 };
+			MainChar->PortraitPos = { boxInner.pos.x + boxInner.size.x - 100,boxInner.pos.y - 200 };
+		}
 	};
 	struct cutScene
 	{
@@ -276,6 +285,7 @@ public:
 	int nextNpcNum = 0;
 	int nextSceneNum = 0;
 	bool gameOver = false;
+	bool FireOff = false;
 	ScreenWipe Wiper;
 	bool ScreenWiping = false;
 	std::vector<std::vector<cutScene>> Scenes;
@@ -283,8 +293,8 @@ public:
 	npc* ActiveNPC;
 	std::vector<std::string> Drinks = {"Manhattan","Martini","Red Wine","Scotch and Soda","Daiquiri","Old Fashioned"};
 	std::vector<std::vector<std::string>> Problems;
-	std::vector<std::string> sprStrings;
-	std::vector<std::string> ChangelingSprStrings;
+	std::vector<std::string> sprStrings ={ "./assets/MiddleAgedMan.png","./assets/officelady.png","./assets/trucker.png","./assets/MarriedWoman.png" };
+	std::vector<std::string> ChangelingSprStrings = { "./assets/MiddleAgedManChangling.png", "./assets/officeladyChangling.png","./assets/truckerChangling.png", "./assets/MarriedWomanChangling.png" };
 	int SelectionNum = 0;
 	bool SettingNextScene = false;
 	std::vector<int> npcNums = { drifter,officelady,trucker,marriedwoman};
@@ -374,8 +384,8 @@ public:
 			}
 		}
 		
-		/*DrawDecal(CurrentScenePtr->SceneWindow.MainChar->PortraitPos, CurrentScenePtr->SceneWindow.MainChar->PortraitDecptr);
-		DrawDecal(CurrentScenePtr->SceneWindow.NpcInScene->PortraitPos, CurrentScenePtr->SceneWindow.NpcInScene->PortraitDecptr);*/
+		DrawDecal(CurrentScenePtr->SceneWindow.MainChar->PortraitPos, CurrentScenePtr->SceneWindow.MainChar->PortraitDecptr,{.25,.25});
+		DrawDecal(CurrentScenePtr->SceneWindow.NpcInScene->PortraitPos, CurrentScenePtr->SceneWindow.NpcInScene->PortraitDecptr, { .25,.25 });
 	}
 	void DrawSelectionBox(checkBox& thisBox)
 	{
@@ -423,7 +433,8 @@ public:
 	}
 	void SetCurrentScene(int npcnum , int scenenum)
 	{
-		CurrentScenePtr = &Scenes[npcnum][scenenum];
+		CurrentScenePtr = &Scenes[scenenum][npcnum];
+		
 		CurrentScenePtr->NextStringSetter();
 	}
 	void PickRandomNPC()
@@ -433,7 +444,27 @@ public:
 		NPCs[randint].PortraitsprPtr = new olc::Sprite(ChangelingSprStrings[randint]);
 		NPCs[randint].PortraitDecptr = new olc::Decal(NPCs[randint].PortraitsprPtr);
 		//ActiveNPC = &NPCs[randint];
+		int scenenum = 0;
+		for (auto i = Scenes.begin(); i < Scenes.end(); i++)
+		{
+			for (auto x = i->begin(); x < i->end(); x++)
+			{
+				if (scenenum >= nextSceneNum)
+				{
 
+
+					if (NPCs[randint].IDnum ==x->SceneWindow.NpcInScene->IDnum )
+					{
+						x->SceneWindow.NpcInScene=&NPCs[randint];
+						parseFile(4, scenenum, "./assets/Story.txt", x->npcStrings);
+						parseFile(4, scenenum, "./assets/BartenderReply.txt", x->MainCharStrings);
+						parseFile(4, scenenum, "./assets/Choices.txt", x->SceneWindow.selectionStrings);
+						x->SceneWindow.setSelections(2);
+					}
+				}
+			}
+			scenenum++;
+		}
 
 	}
 
@@ -451,16 +482,18 @@ public:
 		}
 		int npC = 0;
 	    scenenum = 0;
+		//going in a straight line not one to the next right now probably quick fix
 		for (auto i = Scenes.begin(); i < Scenes.end(); i++)
 		{
-			if (scenenum ==2)
+			/*if (scenenum ==2)
 			{
 				PickRandomNPC();
-			}
+			}*/
 			for (auto x = i->begin(); x < i->end(); x++)
 			{
 				
 				x->SceneWindow.NpcInScene = &NPCs[npC];
+				x->SceneWindow.NpcInScene->IDnum = npC;
 				x->SceneWindow.MainChar = &MainCharacter;
 				if (x->SceneWindow.NpcInScene->Changling==false)
 				{
@@ -479,8 +512,11 @@ public:
 
 				x->SceneWindow.setBox(olc::vf2d( 5,ScreenHeight() - 150 ), olc::vf2d(  ScreenWidth() - 15, 75 ), olc::BLUE, olc::WHITE);
 				x->SceneWindow.setStringPos();
+				x->SceneWindow.setPortraitPos();
+				x->SceneWindow.setSelections(2);
+				npC++;
 			}
-			npC++;
+			npC = 0;
 			scenenum++;
 		}
 	}
@@ -497,32 +533,47 @@ public:
 		newNpc.PortraitDecptr = new olc::Decal(newNpc.PortraitsprPtr);
 		NPCs.emplace_back(newNpc);
 	}
-	
+	void SetBartenderSpr()
+	{
+		MainCharacter.PortraitsprPtr = new olc::Sprite("./assets/Bartender.png");
+		MainCharacter.PortraitDecptr = new olc::Decal(MainCharacter.PortraitsprPtr);
+	}
 	void InitThings()
 	{
 	
 	
-
+		SetBartenderSpr();
 		for (int i = 0; i < npcNums.size(); i++)
 		{
-			InitNpcs(npcNums[i], "");
+			InitNpcs(npcNums[i], sprStrings[i]);
 		}
-		for (int i = 0; i < npcNums.size(); i++)
-		{
-			InitCutscenes(npcNums[i], 7);
-		}
+	
+		InitCutscenes(4, 4);
+		
 		SetCurrentScene(nextNpcNum, nextSceneNum);
-		CurrentScenePtr->SceneWindow.setSelections( 2);
+		//CurrentScenePtr->SceneWindow.setSelections( 2);
 	}
 	void UpdatenextnpcNum()
 	{
-		if (nextNpcNum<NPCs.size())
+		if (nextNpcNum<NPCs.size()-1)
 		{
 			nextNpcNum++;
 		}
 		else
 		{
 			nextNpcNum = 0;
+			if (nextSceneNum<3)
+			{
+				nextSceneNum++;
+				if (nextSceneNum ==2)
+				{
+					PickRandomNPC();
+				}
+			}
+			else
+			{
+				gameOver = true;
+			}
 			
 		}
 	}
@@ -540,12 +591,12 @@ public:
 	{
 		GameState = newState;
 	}
-	void PlayerControls()
+	void PlayerControls(float fElapsedTime)
 	{
 		switch (GameState)
 		{
 		case cutsceneState:
-			if (ScreenWiping == false)
+			if (ScreenWiping == false&&CurrentScenePtr->Over == false)
 			{
 
 
@@ -583,6 +634,13 @@ public:
 					{
 						CurrentScenePtr->NextStringSetter();
 					}
+				}
+			}
+			else
+			{
+				if (GetKey(olc::Key::ENTER).bReleased)
+				{
+					FireOff = true;
 				}
 			}
 			break;
@@ -636,7 +694,8 @@ public:
 	}
 	void DrawGameOver()
 	{
-
+		DrawStringDecal(olc::vf2d(  25, ScreenHeight() / 2 ), "Thanks for playing!");
+		DrawStringDecal(olc::vf2d(  25, (ScreenHeight() / 2) + 50 ), "Your score is " + std::to_string(score));
 	}
 	void DrawTitleScreen()
 	{
@@ -659,7 +718,7 @@ public:
 				{
 					SettingNextScene = true;
 					UpdatenextnpcNum();
-					SetCurrentScene(nextNpcNum, 0);
+					SetCurrentScene(nextNpcNum, nextSceneNum);
 				}
 				if (Wiper.active == false)
 				{
@@ -697,6 +756,7 @@ public:
 			else
 			{
 				Wiper.active = false;
+				FireOff = false;
 			}
 		}
 	}
@@ -738,11 +798,20 @@ public:
 	bool OnUserUpdate(float fElapsedTime) override
 	{
 		Clear(olc::BLACK);
-		PlayerControls();
+		PlayerControls(fElapsedTime);
 		DrawScreen(fElapsedTime);
 		if (GameState != EODstate)
 		{
-			CutsceneUpdater(fElapsedTime);
+			if (FireOff == true)
+			{
+
+
+				CutsceneUpdater(fElapsedTime);
+			}
+			if (gameOver == true)
+			{
+				GameStateManager(GameOverState);
+			}
 			
 		}
 		else
@@ -769,7 +838,7 @@ public:
 
 int main()
 {
-	srand(time(0));
+	srand(std::time(NULL));
 	Example demo;
 	if (demo.Construct(600, 400, 4, 4))
 		demo.Start();

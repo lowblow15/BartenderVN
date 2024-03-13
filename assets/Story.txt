@@ -49,7 +49,7 @@
 3 0 You know what I need
 3 0 He's cheating ...I just know it
 3 0 He keeps coming home late and he keeps getting texts at night.
-3 0 No ...no one else is working late at his office. I checked. I have to confront him.
+3 0 No ...no one else is working late at his office. I checked. 
 3 0 Im going to figure this out.
 3 1 I need to get drunk. Give me my usual.
 3 1 I followed him after work. He went to a bar.
@@ -58,7 +58,7 @@
 3 2 He actually accused ME of cheating!
 3 2 I hate men.
 3 3 Bloody mary please, its my last!
-3 3 Turns out he wasn't cheating on me. He thought I was!He kept going to bars looking for me!
+3 3 Turns out he wasn't cheating on me. He thought I was!
 3 3 We both decided to not go to anymore bars after today!
 
 4 2 Give me a beer.
